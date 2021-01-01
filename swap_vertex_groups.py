@@ -27,6 +27,12 @@ class OPERATOR_OT_SwapVertexGroups(bpy.types.Operator):
         for obj in selected:
             vg1 = obj.vertex_groups.get(self.g1)
             vg2 = obj.vertex_groups.get(self.g2)
+            if vg1 == None:
+                self.report({'ERROR'}, "First vertex group does not exist in object!")
+                return {"CANCELLED"}
+            elif vg2 == None:
+                self.report({'ERROR'}, "Second vertex group does not exist in object!")
+                return {"CANCELLED"}
 
             vg_idx1 = vg1.index
             vs1 = getVertexAndWeights(obj, vg_idx1)
@@ -34,8 +40,12 @@ class OPERATOR_OT_SwapVertexGroups(bpy.types.Operator):
             vg_idx2 = vg2.index
             vs2 = getVertexAndWeights(obj, vg_idx2)
 
-            vg1.remove(list(vs1.keys()))
-            vg2.remove(list(vs2.keys()))
+            try:
+                vg1.remove(list(vs1.keys()))
+                vg2.remove(list(vs2.keys()))
+            except RuntimeError:
+                self.report({'ERROR'}, "This action cannot be performed in edit mode!")
+                return {"CANCELLED"}
 
             for key in list(vs1.keys()):
                 vg2.add([key], vs1[key], 'REPLACE')
