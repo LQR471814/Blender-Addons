@@ -22,7 +22,7 @@ class OPERATOR_OT_SwapVertexGroups(bpy.types.Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        selected = bpy.context.selected_objects
+        selected = context.selected_objects
 
         for obj in selected:
             vg1 = obj.vertex_groups.get(self.g1)
